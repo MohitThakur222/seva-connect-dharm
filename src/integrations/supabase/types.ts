@@ -14,16 +14,141 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          created_at: string
+          event_date: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: string
+          message: string | null
+          name: string
+          phone: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_date: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id?: string
+          message?: string | null
+          name: string
+          phone: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_date?: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      donations: {
+        Row: {
+          amount: number | null
+          category: Database["public"]["Enums"]["donation_category"]
+          created_at: string
+          donor_name: string | null
+          donor_phone: string | null
+          id: string
+          notes: string | null
+        }
+        Insert: {
+          amount?: number | null
+          category?: Database["public"]["Enums"]["donation_category"]
+          created_at?: string
+          donor_name?: string | null
+          donor_phone?: string | null
+          id?: string
+          notes?: string | null
+        }
+        Update: {
+          amount?: number | null
+          category?: Database["public"]["Enums"]["donation_category"]
+          created_at?: string
+          donor_name?: string | null
+          donor_phone?: string | null
+          id?: string
+          notes?: string | null
+        }
+        Relationships: []
+      }
+      event_popups: {
+        Row: {
+          created_at: string
+          description: string
+          event_date: string
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          event_date: string
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          event_date?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
+      donation_category:
+        | "medical_camp"
+        | "student_help"
+        | "marriage_support"
+        | "general_seva"
+      event_type: "marriage" | "birthday" | "barsi" | "tervi" | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +275,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+      donation_category: [
+        "medical_camp",
+        "student_help",
+        "marriage_support",
+        "general_seva",
+      ],
+      event_type: ["marriage", "birthday", "barsi", "tervi", "other"],
+    },
   },
 } as const
