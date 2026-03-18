@@ -12,6 +12,8 @@ import Index from "./pages/Index";
 import ServicesPage from "./pages/Services";
 import DonationPage from "./pages/Donation";
 import BookingPage from "./pages/Booking";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,17 +27,28 @@ const App = () => {
       <TooltipProvider>
         <Sonner />
         <BrowserRouter>
-          <Header lang={lang} setLang={setLang} t={t} />
           <Routes>
-            <Route path="/" element={<Index t={t} />} />
-            <Route path="/services" element={<ServicesPage t={t} />} />
-            <Route path="/donation" element={<DonationPage t={t} />} />
-            <Route path="/booking" element={<BookingPage t={t} />} />
-            <Route path="*" element={<NotFound />} />
+            {/* Admin routes - no header/footer */}
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+            {/* Public routes */}
+            <Route path="*" element={
+              <>
+                <Header lang={lang} setLang={setLang} t={t} />
+                <Routes>
+                  <Route path="/" element={<Index t={t} />} />
+                  <Route path="/services" element={<ServicesPage t={t} />} />
+                  <Route path="/donation" element={<DonationPage t={t} />} />
+                  <Route path="/booking" element={<BookingPage t={t} />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <Footer t={t} />
+                <FloatingButtons />
+                <EventPopup t={t} />
+              </>
+            } />
           </Routes>
-          <Footer t={t} />
-          <FloatingButtons />
-          <EventPopup t={t} />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
