@@ -24,7 +24,7 @@ const DonationPage = ({ t }: DonationPageProps) => {
   };
 
   return (
-    <div className="pt-20 pb-20 md:pb-8">
+    <div className="pt-20 pb-8">
       <div className="bg-navy text-secondary-foreground py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">{t('donation_title')}</h1>
