@@ -18,53 +18,44 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const PublicLayout = ({ lang, setLang }: { lang: Language; setLang: (l: Language) => void }) => {
+const AppContent = () => {
+  const [lang, setLang] = useState<Language>('en');
   const t = useTranslation(lang);
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
 
-  if (isAdmin) return null;
-
   return (
     <>
-      <Header lang={lang} setLang={setLang} t={t} />
-      <Footer t={t} />
-      <FloatingButtons />
-      <EventPopup t={t} />
+      {!isAdmin && <Header lang={lang} setLang={setLang} t={t} />}
+      <Routes>
+        <Route path="/" element={<Index t={t} />} />
+        <Route path="/services" element={<ServicesPage t={t} />} />
+        <Route path="/donation" element={<DonationPage t={t} />} />
+        <Route path="/booking" element={<BookingPage t={t} />} />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      {!isAdmin && (
+        <>
+          <Footer t={t} />
+          <FloatingButtons />
+          <EventPopup t={t} />
+        </>
+      )}
     </>
   );
 };
 
-const AppRoutes = ({ lang }: { lang: Language }) => {
-  const t = useTranslation(lang);
-
-  return (
-    <Routes>
-      <Route path="/" element={<Index t={t} />} />
-      <Route path="/services" element={<ServicesPage t={t} />} />
-      <Route path="/donation" element={<DonationPage t={t} />} />
-      <Route path="/booking" element={<BookingPage t={t} />} />
-      <Route path="/admin" element={<AdminLogin />} />
-      <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
-};
-
-const App = () => {
-  const [lang, setLang] = useState<Language>('en');
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Sonner />
-        <BrowserRouter>
-          <PublicLayout lang={lang} setLang={setLang} />
-          <AppRoutes lang={lang} />
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-};
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Sonner />
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
