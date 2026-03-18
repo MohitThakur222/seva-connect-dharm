@@ -24,23 +24,6 @@ const FloatingButtons = () => {
         <Phone size={28} />
       </a>
 
-      {/* Mobile sticky bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 md:hidden flex">
-        <a
-          href={`https://wa.me/${WHATSAPP_NUMBER}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 bg-whatsapp text-whatsapp-foreground py-3 flex items-center justify-center gap-2 font-semibold text-sm font-body"
-        >
-          <MessageCircle size={18} /> WhatsApp
-        </a>
-        <a
-          href={`tel:${CALL_NUMBER}`}
-          className="flex-1 bg-navy text-secondary-foreground py-3 flex items-center justify-center gap-2 font-semibold text-sm font-body"
-        >
-          <Phone size={18} /> Call Now
-        </a>
-      </div>
     </>
   );
 };
