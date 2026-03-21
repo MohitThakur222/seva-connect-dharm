@@ -1,12 +1,28 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import heroImage from '@/assets/hero-gurudwara.jpg';
+import { supabase } from '@/integrations/supabase/client';
+import heroImageDefault from '@/assets/hero-gurudwara.jpg';
 
 interface HeroSectionProps {
   t: (key: string) => string;
 }
 
 const HeroSection = ({ t }: HeroSectionProps) => {
+  const [heroImage, setHeroImage] = useState(heroImageDefault);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      const { data } = await supabase
+        .from('site_images')
+        .select('image_url')
+        .eq('image_key', 'hero')
+        .single();
+      if (data?.image_url) setHeroImage(data.image_url);
+    };
+    fetchImage();
+  }, []);
+
   return (
     <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
       <div

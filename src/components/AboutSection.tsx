@@ -1,11 +1,27 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import aboutImage from '@/assets/about-gurudwara.jpg';
+import { supabase } from '@/integrations/supabase/client';
+import aboutImageDefault from '@/assets/about-gurudwara.jpg';
 
 interface AboutSectionProps {
   t: (key: string) => string;
 }
 
 const AboutSection = ({ t }: AboutSectionProps) => {
+  const [aboutImage, setAboutImage] = useState(aboutImageDefault);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      const { data } = await supabase
+        .from('site_images')
+        .select('image_url')
+        .eq('image_key', 'about')
+        .single();
+      if (data?.image_url) setAboutImage(data.image_url);
+    };
+    fetchImage();
+  }, []);
+
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">

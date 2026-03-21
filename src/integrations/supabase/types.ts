@@ -110,6 +110,69 @@ export type Database = {
         }
         Relationships: []
       }
+      services: {
+        Row: {
+          created_at: string
+          description: string
+          details: string[]
+          icon: string
+          id: string
+          is_active: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+          whatsapp_msg: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          details?: string[]
+          icon?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+          whatsapp_msg?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          details?: string[]
+          icon?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          whatsapp_msg?: string
+        }
+        Relationships: []
+      }
+      site_images: {
+        Row: {
+          id: string
+          image_key: string
+          image_url: string
+          label: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          image_key: string
+          image_url: string
+          label?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          image_key?: string
+          image_url?: string
+          label?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
