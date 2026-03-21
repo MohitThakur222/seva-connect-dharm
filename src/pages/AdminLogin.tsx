@@ -8,13 +8,22 @@ const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        toast.success('Account created! Please contact the admin to get access.');
+        setIsSignUp(false);
+        return;
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
@@ -35,7 +44,7 @@ const AdminLogin = () => {
       toast.success('Welcome, Admin!');
       navigate('/admin/dashboard');
     } catch (err: any) {
-      toast.error(err.message || 'Login failed');
+      toast.error(err.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -48,11 +57,13 @@ const AdminLogin = () => {
           <div className="w-16 h-16 bg-kesari-light rounded-full flex items-center justify-center mx-auto mb-4">
             <Lock size={28} className="text-kesari" />
           </div>
-          <h1 className="font-display text-2xl font-bold text-navy">Admin Login</h1>
+          <h1 className="font-display text-2xl font-bold text-navy">
+            {isSignUp ? 'Admin Sign Up' : 'Admin Login'}
+          </h1>
           <p className="text-muted-foreground font-body text-sm mt-1">Gurudwara Sadh Sangat Sahib</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2 font-body">Email</label>
             <input
@@ -78,9 +89,19 @@ const AdminLogin = () => {
             disabled={loading}
             className="w-full bg-navy text-secondary-foreground py-3 rounded-lg font-semibold font-body hover:bg-navy-light transition-colors disabled:opacity-50"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? (isSignUp ? 'Creating account...' : 'Signing in...') : (isSignUp ? 'Sign Up' : 'Sign In')}
           </button>
         </form>
+
+        <p className="text-center text-sm text-muted-foreground mt-4 font-body">
+          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+          <button
+            onClick={() => setIsSignUp(!isSignUp)}
+            className="text-primary font-semibold hover:underline"
+          >
+            {isSignUp ? 'Sign In' : 'Sign Up'}
+          </button>
+        </p>
       </div>
     </div>
   );
