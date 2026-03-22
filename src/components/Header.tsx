@@ -1,18 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Language } from '@/lib/i18n';
-import khandaIcon from '@/assets/khanda-icon.png';
+import { supabase } from '@/integrations/supabase/client';
+import khandaIconDefault from '@/assets/khanda-icon.png';
 
 interface HeaderProps {
   lang: Language;
   setLang: (lang: Language) => void;
   t: (key: string) => string;
+  gurudwaraName?: string;
 }
 
-const Header = ({ lang, setLang, t }: HeaderProps) => {
+const Header = ({ lang, setLang, t, gurudwaraName = 'Gurudwara Sadh Sangat Sahib' }: HeaderProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState(khandaIconDefault);
   const location = useLocation();
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      const { data } = await supabase
+        .from('site_images')
+        .select('image_url')
+        .eq('image_key', 'header_logo')
+        .single();
+      if (data?.image_url) setLogoUrl(data.image_url);
+    };
+    fetchLogo();
+  }, []);
 
   const navLinks = [
     { to: '/', label: t('nav_home') },
@@ -31,9 +46,9 @@ const Header = ({ lang, setLang, t }: HeaderProps) => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <Link to="/" className="flex items-center gap-2">
-          <img src={khandaIcon} alt="Gurudwara Sadh Sangat Sahib" className="h-10 w-10" />
+          <img src={logoUrl} alt={gurudwaraName} className="h-10 w-10" />
           <span className="font-display text-lg font-bold text-navy hidden sm:block">
-            Gurudwara Sadh Sangat Sahib
+            {gurudwaraName}
           </span>
         </Link>
 

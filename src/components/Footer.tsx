@@ -1,25 +1,48 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail } from 'lucide-react';
-import { CALL_NUMBER, GOOGLE_MAPS_URL } from '@/lib/constants';
-import khandaIcon from '@/assets/khanda-icon.png';
+import { MapPin, Phone } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import khandaIconDefault from '@/assets/khanda-icon.png';
+import type { ContactInfo } from '@/hooks/useSiteSettings';
 
 interface FooterProps {
   t: (key: string) => string;
+  contactInfo?: ContactInfo;
+  gurudwaraName?: string;
+  footerText?: string;
 }
 
-const Footer = ({ t }: FooterProps) => {
+const Footer = ({ t, contactInfo, gurudwaraName = 'Gurudwara Sadh Sangat Sahib', footerText }: FooterProps) => {
+  const [logoUrl, setLogoUrl] = useState(khandaIconDefault);
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      const { data } = await supabase
+        .from('site_images')
+        .select('image_url')
+        .eq('image_key', 'footer_logo')
+        .single();
+      if (data?.image_url) setLogoUrl(data.image_url);
+    };
+    fetchLogo();
+  }, []);
+
+  const address = contactInfo?.address || 'Saiyyad Mohalla, Dehradun, Uttarakhand';
+  const callNumber = contactInfo?.call_number || '8191011219';
+  const mapsUrl = contactInfo?.google_maps_url || '#';
+  const mapsEmbedUrl = contactInfo?.maps_embed_url || '';
+  const description = footerText || 'Dedicated to serving humanity through selfless service, spiritual guidance, and charitable initiatives.';
+
   return (
     <footer className="bg-navy text-secondary-foreground">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <img src={khandaIcon} alt="" className="h-10 w-10 brightness-0 invert" />
-              <h3 className="font-display text-xl font-bold">Gurudwara Sadh Sangat Sahib</h3>
+              <img src={logoUrl} alt="" className="h-10 w-10 brightness-0 invert" />
+              <h3 className="font-display text-xl font-bold">{gurudwaraName}</h3>
             </div>
-            <p className="text-sm opacity-80 leading-relaxed">
-              Dedicated to serving humanity through selfless service, spiritual guidance, and charitable initiatives.
-            </p>
+            <p className="text-sm opacity-80 leading-relaxed">{description}</p>
           </div>
 
           <div>
@@ -35,13 +58,13 @@ const Footer = ({ t }: FooterProps) => {
           <div>
             <h4 className="font-display text-lg font-semibold mb-4">{t('nav_contact')}</h4>
             <div className="flex flex-col gap-3">
-              <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
+              <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
                 <MapPin size={16} className="text-kesari" />
-                {t('footer_address')}
+                {address}
               </a>
-              <a href={`tel:${CALL_NUMBER}`} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
+              <a href={`tel:${callNumber}`} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
                 <Phone size={16} className="text-kesari" />
-                +91 {CALL_NUMBER}
+                +91 {callNumber}
               </a>
             </div>
           </div>
@@ -49,23 +72,24 @@ const Footer = ({ t }: FooterProps) => {
 
         <div className="border-t border-secondary-foreground/20 mt-8 pt-6 text-center">
           <p className="text-sm opacity-60">
-            © {new Date().getFullYear()} Gurudwara Sadh Sangat Sahib. All rights reserved.
+            © {new Date().getFullYear()} {gurudwaraName}. All rights reserved.
           </p>
         </div>
       </div>
 
-      {/* Google Maps Embed */}
-      <div className="w-full h-64">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3444.5!2d78.03!3d30.32!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDE5JzEyLjAiTiA3OMKwMDEnNDguMCJF!5e0!3m2!1sen!2sin!4v1"
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          allowFullScreen
-          loading="lazy"
-          title="Gurudwara Location"
-        ></iframe>
-      </div>
+      {mapsEmbedUrl && (
+        <div className="w-full h-64">
+          <iframe
+            src={mapsEmbedUrl}
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+            title="Gurudwara Location"
+          ></iframe>
+        </div>
+      )}
     </footer>
   );
 };
