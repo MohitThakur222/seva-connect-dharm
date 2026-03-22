@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Language, useTranslation } from '@/lib/i18n';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
@@ -23,14 +24,15 @@ const AppContent = () => {
   const t = useTranslation(lang);
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  const { contactInfo, committeeMembers, testimonials, gurudwaraName, footerText } = useSiteSettings();
 
   return (
     <>
-      {!isAdmin && <Header lang={lang} setLang={setLang} t={t} />}
+      {!isAdmin && <Header lang={lang} setLang={setLang} t={t} gurudwaraName={gurudwaraName} />}
       <Routes>
-        <Route path="/" element={<Index t={t} />} />
+        <Route path="/" element={<Index t={t} committeeMembers={committeeMembers} testimonials={testimonials} />} />
         <Route path="/services" element={<ServicesPage t={t} />} />
-        <Route path="/donation" element={<DonationPage t={t} />} />
+        <Route path="/donation" element={<DonationPage t={t} contactInfo={contactInfo} />} />
         <Route path="/booking" element={<BookingPage t={t} />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -38,8 +40,8 @@ const AppContent = () => {
       </Routes>
       {!isAdmin && (
         <>
-          <Footer t={t} />
-          <FloatingButtons />
+          <Footer t={t} contactInfo={contactInfo} gurudwaraName={gurudwaraName} footerText={footerText} />
+          <FloatingButtons contactInfo={contactInfo} />
           <EventPopup t={t} />
         </>
       )}

@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { LogOut, Calendar, DollarSign, Bell, Wrench, ImageIcon } from 'lucide-react';
+import { LogOut, Calendar, DollarSign, Bell, Wrench, ImageIcon, FileText } from 'lucide-react';
 import AdminBookings from '@/components/admin/AdminBookings';
 import AdminDonations from '@/components/admin/AdminDonations';
 import AdminPopups from '@/components/admin/AdminPopups';
 import AdminServices from '@/components/admin/AdminServices';
 import AdminImages from '@/components/admin/AdminImages';
+import AdminContent from '@/components/admin/AdminContent';
 
-type TabKey = 'bookings' | 'donations' | 'popups' | 'services' | 'images';
+type TabKey = 'bookings' | 'donations' | 'popups' | 'services' | 'images' | 'content';
 
 const AdminDashboard = () => {
   const [tab, setTab] = useState<TabKey>('bookings');
@@ -17,6 +18,7 @@ const AdminDashboard = () => {
   const [popups, setPopups] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [siteImages, setSiteImages] = useState<any[]>([]);
+  const [siteSettings, setSiteSettings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -39,12 +41,13 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const [bookingsRes, donationsRes, popupsRes, servicesRes, imagesRes] = await Promise.all([
+    const [bookingsRes, donationsRes, popupsRes, servicesRes, imagesRes, settingsRes] = await Promise.all([
       supabase.from('bookings').select('*').order('created_at', { ascending: false }),
       supabase.from('donations').select('*').order('created_at', { ascending: false }),
       supabase.from('event_popups').select('*').order('created_at', { ascending: false }),
       supabase.from('services').select('*').order('sort_order', { ascending: true }),
       supabase.from('site_images').select('*').order('image_key'),
+      supabase.from('site_settings').select('*').order('setting_key'),
     ]);
 
     if (bookingsRes.data) setBookings(bookingsRes.data);
@@ -52,6 +55,7 @@ const AdminDashboard = () => {
     if (popupsRes.data) setPopups(popupsRes.data);
     if (servicesRes.data) setServices(servicesRes.data);
     if (imagesRes.data) setSiteImages(imagesRes.data);
+    if (settingsRes.data) setSiteSettings(settingsRes.data);
     setLoading(false);
   };
 
@@ -66,6 +70,7 @@ const AdminDashboard = () => {
     { key: 'popups' as const, label: 'Popups', icon: Bell, count: popups.length },
     { key: 'services' as const, label: 'Services', icon: Wrench, count: services.length },
     { key: 'images' as const, label: 'Images', icon: ImageIcon, count: siteImages.length },
+    { key: 'content' as const, label: 'Content', icon: FileText, count: siteSettings.length },
   ];
 
   return (
@@ -109,6 +114,7 @@ const AdminDashboard = () => {
             {tab === 'popups' && <AdminPopups popups={popups} fetchData={fetchData} />}
             {tab === 'services' && <AdminServices services={services} fetchData={fetchData} />}
             {tab === 'images' && <AdminImages images={siteImages} fetchData={fetchData} />}
+            {tab === 'content' && <AdminContent settings={siteSettings} fetchData={fetchData} />}
           </>
         )}
       </div>
