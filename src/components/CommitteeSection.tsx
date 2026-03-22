@@ -1,12 +1,15 @@
 import { motion } from 'framer-motion';
-import { COMMITTEE_MEMBERS } from '@/lib/constants';
 import { User } from 'lucide-react';
+import type { CommitteeMember } from '@/hooks/useSiteSettings';
 
 interface CommitteeSectionProps {
   t: (key: string) => string;
+  members?: CommitteeMember[];
 }
 
-const CommitteeSection = ({ t }: CommitteeSectionProps) => {
+const CommitteeSection = ({ t, members = [] }: CommitteeSectionProps) => {
+  if (members.length === 0) return null;
+
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -15,7 +18,7 @@ const CommitteeSection = ({ t }: CommitteeSectionProps) => {
         </h2>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {COMMITTEE_MEMBERS.map((member, i) => (
+          {members.map((member, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
